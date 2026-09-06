@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,6 +31,11 @@ func main() {
 
 	router := gin.Default()
 	router.SetTrustedProxies(nil)
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: cfg.CORSOrigins,
+		AllowMethods: []string{"GET", "POST", "PATCH", "DELETE"},
+		AllowHeaders: []string{"Authorization", "Content-Type"},
+	}))
 
 	a := &api{db: db}
 	router.GET("v1/api/health-check", a.healthCheck)

@@ -3,15 +3,17 @@ package main
 import (
 	"log/slog"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Env       string
-	Port      string
-	DBPath    string
-	JWTSecret string
+	Env         string
+	Port        string
+	DBPath      string
+	JWTSecret   string
+	CORSOrigins []string
 }
 
 func loadConfig() Config {
@@ -29,11 +31,17 @@ func loadConfig() Config {
 		jwtSecret = "xqjfa5dgWiPajvAZ1aOR/IYju+Vbd2FEkRXkYq+qtpI="
 	}
 
+	corsOrigins := strings.Split(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:5173"), ",")
+	for i := range corsOrigins {
+		corsOrigins[i] = strings.TrimSpace(corsOrigins[i])
+	}
+
 	return Config{
-		Env:       env,
-		Port:      getEnv("PORT", "8080"),
-		DBPath:    getEnv("DB_PATH", "blog.db"),
-		JWTSecret: jwtSecret,
+		Env:         env,
+		Port:        getEnv("PORT", "8080"),
+		DBPath:      getEnv("DB_PATH", "blog.db"),
+		JWTSecret:   jwtSecret,
+		CORSOrigins: corsOrigins,
 	}
 }
 
